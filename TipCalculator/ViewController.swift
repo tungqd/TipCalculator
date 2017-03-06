@@ -15,34 +15,52 @@ class ViewController: UIViewController {
     @IBOutlet weak var totalLabel: UILabel!
     @IBOutlet weak var tipControl: UISegmentedControl!
     let tipPercentages = [ 0.18, 0.2, 0.25]
+    let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
+        billField.becomeFirstResponder()
         
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print("view will appear")
-        let defaults = UserDefaults.standard
         if (defaults.object(forKey: "defaultTip") != nil) {
             let defaultTipValue = defaults.double(forKey: "defaultTip")
             self.tipControl.selectedSegmentIndex = tipPercentages.index(of: defaultTipValue)!
-            self.calculateTip(nil)
         }
+        if (defaults.object(forKey: "savedBill") != nil) {
+            let savedBill = defaults.string(forKey: "savedBill")
+            billField.text = savedBill
+        }
+        let start = defaults.object(forKey: "startTime") as! NSDate?
+        if (start != nil) {
+            print(start!)
+            print(NSDate())
+            let elapsedTime = NSDate().timeIntervalSince(start as! Date)
+            print(elapsedTime);
+            if (elapsedTime > (600)) {//elapsed time over 10 minutes
+                billField.text = ""
+            }
+        }
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         print("view did appear")
-        
+        self.calculateTip(nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         print("view will disappear")
+        let start = NSDate()
+        defaults.removeObject(forKey: "startTime")
+        defaults.set(start, forKey: "startTime")
+        defaults.synchronize()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -61,11 +79,16 @@ class ViewController: UIViewController {
     @IBAction func calculateTip(_ sender: Any?) {
         
         let bill = Double(billField.text!) ?? 0
+        
         let tip = bill * tipPercentages[tipControl.selectedSegmentIndex]
         let total = bill + tip
         
         tipLabel.text = String(format: "$%.2f", tip)
         totalLabel.text = String(format: "$%.2f", total)
+        
+        defaults.set(bill, forKey: "savedBill")
+        defaults.synchronize()
+
     }
 
 }

@@ -98,6 +98,7 @@
                         <outlet property="tipControl" destination="QYK-LZ-oKz" id="ehl-Y9-cl7"/>
                         <outlet property="tipLabel" destination="iM5-Cv-8zo" id="Wpi-xX-6QJ"/>
                         <outlet property="totalLabel" destination="u85-74-fAE" id="DS9-JM-IhP"/>
+                        <outlet property="view" destination="8bC-Xf-vdC" id="usj-DX-7ZP"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
