@@ -17,6 +17,7 @@ class ViewController: UIViewController {
     let tipPercentages = [ 0.18, 0.2, 0.25]
     let defaults = UserDefaults.standard
     
+    @IBOutlet var mainView: UIView!
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -51,6 +52,9 @@ class ViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         print("view did appear")
+        UIView.animate(withDuration: 1.0, delay: 0.0, options: UIViewAnimationOptions.curveEaseIn, animations: {
+            self.mainView.alpha = 1.0
+        }, completion: nil)
         self.calculateTip(nil)
     }
     
@@ -83,12 +87,22 @@ class ViewController: UIViewController {
         let tip = bill * tipPercentages[tipControl.selectedSegmentIndex]
         let total = bill + tip
         
-        tipLabel.text = String(format: "$%.2f", tip)
-        totalLabel.text = String(format: "$%.2f", total)
+        tipLabel.text = formatCurrency(value: tip)
+        totalLabel.text = formatCurrency(value: total)
         
         defaults.set(bill, forKey: "savedBill")
         defaults.synchronize()
 
+    }
+
+    //Format currency helper function
+    func formatCurrency(value: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.maximumFractionDigits = 2;
+        formatter.locale = Locale(identifier: Locale.current.identifier)
+        let result = formatter.string(from: value as NSNumber)
+        return result!
     }
 
 }
